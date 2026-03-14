@@ -1,6 +1,6 @@
 from typing import List, Tuple, Dict
 from tiktoken import get_encoding # this is the library used by OpenAI for tokenization and is compatible with their models
-from transformer.tokenization_utils_base import PreTrainedTokenizerBase # we will use this as a base class for our custom tokenizer wrapper this libary is used by HuggingFace transformers and is compatible with many models including OpenAI's
+from transformers.tokenization_utils_base import PreTrainedTokenizerBase # we will use this as a base class for our custom tokenizer wrapper this libary is used by HuggingFace transformers and is compatible with many models including OpenAI's
 
 #lets create a custom tokenizer wrapper that uses tiktoken under the hood but provides a simple interface for our use case for HybridChunker and DocumentConverter. This wrapper will handle tokenization and detokenization, as well as counting tokens in a given text.
 #   """Minimal wrapper for OpenAI's tokenizer."""
@@ -18,9 +18,9 @@ from transformer.tokenization_utils_base import PreTrainedTokenizerBase # we wil
     func(x=1, y=2) --> {'x':1, 'y':2} '''
 class OpenAITokenizerWrapper(PreTrainedTokenizerBase):
   def __init__(self, model_name: str = "cl100k_base", max_length: int = 8191, **kwargs):
-       super.__init__(model_max_length = max_length, **kwargs) # call the parent class constructor
+       super().__init__(model_max_length = max_length, **kwargs) # call the parent class constructor
        self.tokenizer = get_encoding(model_name) # initialize the tiktoken tokenizer with the specified encoding ,getencoding is a function from tiktoken that returns a tokenizer object based on the specified encoding name
-       self.vocab_size = self.tokenizer.max_token_value # get the maximum token value from the tokenizer which represents the size of the vocabulary
+       self._vocab_size = self.tokenizer.max_token_value # get the maximum token value from the tokenizer which represents the size of the vocabulary
   def tokenize(self, text: str, **kwargs) -> List[int]: #main function used to tokenize text, it takes a string input and returns a list of token used by hybridchunker and documentconverter to convert text into tokens for processing by the OpenAI models
        return[str(t)for t in self.tokenizer.encode(text)]# use the tiktoken tokenizer to encode the text into token ids
   def _tokenize(self, text: str) -> List[str]:
@@ -48,5 +48,6 @@ class OpenAITokenizerWrapper(PreTrainedTokenizerBase):
   overall this wrapper allows us to easily tokenize and detokenize text for use with OpenAI models while maintaining compatibility with the HuggingFace ecosystem. 
   and we have also set a default maximum token length of 8191, which is the context length for the text-embeddings-3-large model, ensuring that our tokenization process is optimized for the models we intend to use. 
   at last we added a property for vocab_size to allow easy access to the vocabulary size of the tokenizer, which can be useful for various applications such as determining the size of the input or output space for our models. 
-  overall this implementation provides a robust and flexible tokenizer wrapper that can be easily integrated into our document processing pipeline while ensuring compatibility with both tiktoken and HuggingFace tokenizers, and class method from_pretrained allows us to create an instance of the tokenizer without needing to know the specific details of its implementation, making it easier to use and integrate into our codebase(matches the interface of HuggingFace tokenizers). '''
+  overall this implementation provides a robust and flexible tokenizer wrapper that can be easily integrated into our document processing pipeline while ensuring compatibility with both tiktoken and HuggingFace tokenizers, and class method from_pretrained allows us to create an instance of the tokenizer without needing to know the specific details of its implementation, making it easier to use and integrate into our codebase(matches the interface of HuggingFace tokenizers). 
+  so as summary , our tokenizer must follow the HuggingFace tokenizer interface while still using OpenAI's tokenizer internally'''
   
