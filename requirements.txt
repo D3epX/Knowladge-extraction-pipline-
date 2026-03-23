@@ -8,3 +8,5 @@ lancedb
 streamlit
 tiktoken
 sentence-transformers
+pandas 
+numpy 
