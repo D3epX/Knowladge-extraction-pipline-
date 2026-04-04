@@ -1,4 +1,4 @@
-import streamlit as st
+import streamlit_docs.streamlit as st
 import lancedb
 from openai import OpenAI
 from dotenv import load_dotenv
