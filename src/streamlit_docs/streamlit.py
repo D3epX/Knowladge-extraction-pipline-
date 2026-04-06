@@ -23,7 +23,7 @@ st.write(z, 'squared is', z *z)
 
 #== Streamlit widgets ==#
 st.text_input("give me a number", key="num")
-st.session_state.num
+st.session_state.num # this is how you can access the value of the text input widget
 if st.checkbox("show dataframe"):
     st.write(df)
 option = st.selectbox(
@@ -93,7 +93,7 @@ In the above example, long_running_function is decorated with @st.cache_data. As
 
 Before running the code within long_running_function, Streamlit checks its cache for a previously saved result. If it finds a cached result for the given function and input values, it will return that cached result and not rerun function's code. Otherwise, Streamlit executes the function, saves the result in its cache, and proceeds with the script run. During development, the cache updates automatically as the function code changes, ensuring that the latest changes are reflected in the cache." 
 """ )
-st.image("/home/dahmane/dev/Knowledge-Extraction-Pipeline/src/streamlit_docs/image.png", caption= "this straemlit caching explained")
+st.image("/home/dahmane/dev/Knowledge-Extraction-Pipeline/src/streamlit_docs/static/image.png", caption= "this straemlit caching explained")
 
 st.markdown("""
 Session State
@@ -176,3 +176,46 @@ TOML
 
 Since you don't want to commit your secrets.toml file to your repository, you'll need to learn how your host handles secrets when you're ready to publish your app. Each host platform may have a different way for you to pass your secrets. If you use Streamlit Community Cloud for example, each deployed app has a settings menu where you can load your secrets. After you've written an app and are ready to deploy, you can read all about how to Deploy your app on Community Cloud.
             """)
+#==streamlit session state  example ==#
+if "counter" not in st.session_state:
+    st.session_state.counter = 0 # initialize counter in session state if it doesn't exist and it is the key. 
+st.session_state.counter +=1 # increment counter in session state
+st.header(f"This page has run {st.session_state.counter} times.") # display the counter value
+st.button("Run it again") # button to trigger a rerun of the script
+if "df" not in st.session_state:
+    st.session_state.df = pd.DataFrame(np.random.randn(20, 2), columns=["x", "y"])
+
+st.header("Choose a datapoint color")
+color = st.color_picker("Color", "#FF0000")
+st.divider() # this is just a visual divider to separate the color picker from the scatter chart
+st.scatter_chart(st.session_state.df, x="x", y="y", color=color)
+##== additional features ==##
+##== Streamlit multipage apps ==#
+# Define the pages
+st.markdown("""
+
+streamlit = st.Page("streamlit.py", title="streamlit Page", icon="🎈")
+page_2 = st.Page("page_2.py", title="Page 2", icon="❄️")
+page_3 = st.Page("page_3.py", title="Page 3", icon="🎉")
+
+# Set up navigation
+pg = st.navigation([streamlit, page_2, page_3])
+
+# Run the selected page
+pg.run()
+""")
+st.markdown("""
+App model summary
+
+Now that you know a little more about all the individual pieces, let's close the loop and review how it works together:
+
+    Streamlit apps are Python scripts that run from top to bottom.
+    Every time a user opens a browser tab pointing to your app, the script is executed and a new session starts.
+    As the script executes, Streamlit draws its output live in a browser.
+    Every time a user interacts with a widget, your script is re-executed and Streamlit redraws its output in the browser.
+        The output value of that widget matches the new value during that rerun.
+    Scripts use the Streamlit cache to avoid recomputing expensive functions, so updates happen very fast.
+    Session State lets you save information that persists between reruns when you need more than a simple widget.
+    Streamlit apps can contain multiple pages, which are defined in separate .py files in a pages folder.
+""")
+st.image("/home/dahmane/dev/Knowledge-Extraction-Pipeline/src/streamlit_docs/static/image copy.png", caption= "this straemlit app model summary explained")
