@@ -214,3 +214,18 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# LanceDB (DB files + transaction logs/metadata)
+data/lancedb/
+**/lancedb/
+**/.lancedb/
+**/_transactions/
+**/*.txn
+**/*.wal
+
+# Tokenizer / tokenizers cache + Python cache
+tokenizer/__pycache__/
+**/tokenizer/**/__pycache__/
+**/tokenizers/**/__pycache__/
+**/.cache/huggingface/
+**/.cache/tokenizers/
