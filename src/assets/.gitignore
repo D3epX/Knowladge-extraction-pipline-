@@ -2,7 +2,9 @@
 __pycache__/
 *.py[codz]
 *$py.class
-
+# Python cache
+**/__pycache__/
+*.py[cod]
 # C extensions
 *.so
 
@@ -216,12 +218,13 @@ __marimo__/
 .streamlit/secrets.toml
 
 # LanceDB (DB files + transaction logs/metadata)
-data/lancedb/
+src/data/lancedb/
 **/lancedb/
 **/.lancedb/
 **/_transactions/
 **/*.txn
 **/*.wal
+**/*.manifest
 
 # Tokenizer / tokenizers cache + Python cache
 tokenizer/__pycache__/
