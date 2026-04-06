@@ -27,7 +27,7 @@ def get_sitemap_urls(base_url: str, sitemap_filename: str = "sitemap.xml") -> Li
 
         # # Return just the base URL if sitemap not found
         if response.status_code == 404:
-            return [base_url.rstrip("/")]
+            return [base_url.rstrip("/")] #this makes sure we don't have a trailing slash in the base URL
 
         response.raise_for_status()
 
@@ -36,14 +36,14 @@ def get_sitemap_urls(base_url: str, sitemap_filename: str = "sitemap.xml") -> Li
 
         # Handle different XML namespaces that sitemaps might use
         namespaces = (
-            {"ns": root.tag.split("}")[0].strip("{")} if "}" in root.tag else ""
+            {"ns": root.tag.split("}")[0].strip("{")} if "}" in root.tag else "" # Extract namespace if present, otherwise use empty string
         )
 
         # Extract URLs using namespace if present
         if namespaces:
-            urls = [elem.text for elem in root.findall(".//ns:loc", namespaces)]
+            urls = [elem.text for elem in root.findall(".//ns:loc", namespaces)] # Use namespace-aware search
         else:
-            urls = [elem.text for elem in root.findall(".//loc")]
+            urls = [elem.text for elem in root.findall(".//loc")] # Fallback to non-namespace search if no namespace is detected
 
         return urls
 

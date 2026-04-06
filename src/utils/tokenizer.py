@@ -36,9 +36,9 @@ class OpenAITokenizerWrapper(PreTrainedTokenizerBase):
       return str(index) # convert the integer id back to a token string
   
   def get_vocab(self) -> Dict[str , int]:
-      return dict(enumerate(range(self.vocab_size))) # return a dictionary mapping token strings to their corresponding integer ids based on the vocabulary size of the tokenizer , enumerate is a function that adds a counter to an iterable and returns it as an enumerate object, which can be converted to a list of tuples or a dictionary
+      return dict(enumerate(range(self.vocab_size))) # return a dictionary mapping token strings to their corresponding integer ids based on the vocabulary size of the tokenizer , enumerate is a function that adds a counter to an iterable and returns it as an enumerate object, which can be converted to a list of tuples or a dictionary where the range function generates a sequence of integers from 0 to vocab_size-1, which represent the token ids in the tokenizer's vocabulary.
   
-  def __len__(self):
+  def __len__(self): # this is a special method that allows us to use the len() function on an instance of the tokenizer to get the vocabulary size, which is a common feature of tokenizers in the HuggingFace ecosystem and is required for compatibility with their tokenization interface
         """Required by HuggingFace tokenizer interface."""
         return self.vocab_size  
 
