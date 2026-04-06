@@ -218,7 +218,7 @@ __marimo__/
 .streamlit/secrets.toml
 
 # LanceDB (DB files + transaction logs/metadata)
-src/data/lancedb/
+/src/data/lancedb/
 **/lancedb/
 **/.lancedb/
 **/_transactions/
