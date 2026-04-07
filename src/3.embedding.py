@@ -14,10 +14,10 @@ MAX_TOKENS = 8191
 EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 
 # These absolute paths keep the script runnable as a standalone file.
-PDF_PATH = "/home/dahmane/dev/Knowledge-Extraction-Pipeline/src/data/docling.pdf"
+PDF_PATH = "/home/dahmane/dev/Knowledge-Extraction-Pipeline/src/data/ethics-of-digital-scientific-communication-in-algeria-and-the-limits-of-distinguishing-between-legal-regulations-and-the-need-for-scientific-information.pdf"
 DB_PATH = "/home/dahmane/dev/Knowledge-Extraction-Pipeline/src/data/lancedb"
 
-# Initialize a local sentence-transformers model via LanceDB registry.
+# Initialize a local sentence-transformers model via LanceDB registry. registry is a convenient interface to many popular embedding models, and it handles caching automatically.
 # This downloads the model on first run and then reuses the local cache.
 func = get_registry().get("sentence-transformers").create(
      name=EMBEDDING_MODEL,
@@ -29,10 +29,10 @@ def get_page_number(chunk) -> int | None:
      # Docling provenance can contain several page references for one chunk.
      # The schema stores a single page number, so we keep the first sorted page.
      page_numbers = sorted(
-          {
+          { #prov is the provenance object, which includes page_no among other details.
                prov.page_no
-               for item in chunk.meta.doc_items
-               for prov in item.prov
+               for item in chunk.meta.doc_items #meta.doc_items is a list of document items that contributed to the chunk, and we iterate over them to extract page numbers from their provenance.
+               for prov in item.prov 
           }
      )
      return page_numbers[0] if page_numbers else None
@@ -47,8 +47,8 @@ class ChunkMetadata(LanceModel):
 
 class Chunks(LanceModel):
      # SourceField tells LanceDB to generate embeddings from this text column.
-     text: str = func.SourceField()
-     vector: Vector(func.ndims()) = func.VectorField()  # pyright: ignore[reportInvalidTypeForm]
+     text: str = func.SourceField()# This line indicates that the "text" field is the source for embedding generation. LanceDB will use the text in this field to compute the embedding vector for each chunk.
+     vector: Vector(func.ndims()) = func.VectorField()  #this line tells LanceDB to compute and store the embedding vector for each chunk using func.ndims() to determine the dimensionality of the vector based on the embedding model.
      metadata: ChunkMetadata
 
 
@@ -72,7 +72,7 @@ chunks = list(chunker.chunk(dl_doc=result.document))
 # Step 3: connect to the local LanceDB database and recreate the target table schema.
 db = lancedb.connect(DB_PATH)
 
-table = db.create_table("docling", schema=Chunks, mode="overwrite")
+table = db.create_table("ethics", schema=Chunks, mode="overwrite")
 
 # Step 4: prepare rows for insertion.
 # Each row includes text and metadata; LanceDB computes vectors automatically.
