@@ -8,7 +8,7 @@ import os
 
 # construct full path to .env file
 dotenv_path = os.path.join((os.path.dirname(__file__)), 'assets', '.env') #so we are going up one level from the current file, then into the assets folder, and then we are loading the .env file from there. This way we can keep our .env file organized in a separate folder and not clutter our main codebase.
-load_dotenv(dotenv_path)
+load_dotenv(dotenv_path) #os path join is a function that allows us to construct a full path to a file by joining different parts of the path together. In this case, we are joining the directory of the current file, the 'assets' folder, and the '.env' file to create the full path to our .env file.
 
 # Optional: check that the API key is loaded
 api_key = os.getenv('OPENAI_API_KEY')
