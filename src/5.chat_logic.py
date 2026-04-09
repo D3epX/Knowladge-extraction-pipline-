@@ -78,3 +78,17 @@ def get_chat_response(messages:str, context:str) -> str:
       stream=True,  # streaming response allows us to receive the model's output in real-time as it's generated, rather than waiting for the entire response to be completed before receiving it.
       top_p=1 #top_p is a parameter that controls how the model selects words based on probability. It's called nucleus sampling.
    )
+   #using streamlit streaming.
+   response = st.write_streaming(stream) #this line uses Streamlit's st.write_streaming function to display the streaming response from the OpenAI API in real-time on the Streamlit app. As the model generates its response, it will be displayed incrementally to the user, providing a more interactive and dynamic experience.
+   return response
+
+st.title(" ⚖️ Legal Chatbot")
+#intialise session state for chat history 
+if "messages" not in st.session_state:
+   st.session_state.messages = []
+#intialize database connections
+db = init_db()
+#display chat messages
+for message in st.session_state.messages:
+   with st.chat_message(message["role"]):
+      st.markdown(message["content"])
