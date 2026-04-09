@@ -1,11 +1,12 @@
-import streamlit_docs.streamlit as st
+import streamlit as st
 import lancedb
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
 
 # Load environment variables from .env file
-path_dotenv =os.path_join((os.path.dirname(__file__)), 'assets', '.env')
+path_dotenv = os.path.join(os.path.dirname(__file__), 'assets', '.env')
+load_dotenv(path_dotenv)
 api_key = os.getenv('OPENAI_API_KEY')
 if not api_key:
     raise ValueError("OPENAI_API_KEY not found in environment variables. Please check your .env file.")
