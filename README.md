@@ -84,6 +84,22 @@ To deactivate:
 conda deactivate
 ```
 
+### Option 2: Python Virtual Environment (venv)
+
+Create and activate a virtual environment:
+
+```bash
+python3.10 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+To deactivate:
+
+```bash
+deactivate
+```
+
 ## Quick Start
 
 1. Prepare your environment and install dependencies.
