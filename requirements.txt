@@ -2,6 +2,7 @@ requests
 ipykernel
 python-dotenv
 openai
+google-generativeai
 pydantic
 docling
 lancedb
