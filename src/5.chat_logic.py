@@ -1,6 +1,7 @@
 import os
 
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 import lancedb
 import streamlit as st
 from dotenv import load_dotenv
@@ -14,13 +15,10 @@ if not api_key:
     st.error("GEMINI_API_KEY not found in environment variables. Please check your .env file.")
     st.stop()
 
-# Configure Gemini once at startup.
-genai.configure(api_key=api_key)
-
-
-
 MODEL_NAME = "gemini-3-flash-preview"
-model = genai.GenerativeModel(MODEL_NAME)
+
+# Initialize Gemini client once at startup.
+client = genai.Client(api_key=api_key)
 st.caption(f"Using Gemini model: {MODEL_NAME}")
 
 # Initialize LanceDB connection
@@ -84,18 +82,17 @@ def get_chat_response(messages: list[dict], context: str) -> str:
         "Answer the latest user request only based on the provided context."
     )
 
-    generation_config = genai.types.GenerationConfig(temperature=0.2, top_p=1)
+    generation_config = types.GenerateContentConfig(temperature=0.2, top_p=1)
 
     # Yield partial tokens to Streamlit for a live typing effect.
     def stream_generator():
-        for chunk in model.generate_content(
-            full_prompt,
-            generation_config=generation_config,
-            stream=True,
+        for chunk in client.models.generate_content_stream(
+            model=MODEL_NAME,
+            contents=full_prompt,
+            config=generation_config,
         ):
-            text = getattr(chunk, "text", "")
-            if text:
-                yield text
+            if chunk.text:
+                yield chunk.text
 
     try:
         response = st.write_stream(stream_generator())
