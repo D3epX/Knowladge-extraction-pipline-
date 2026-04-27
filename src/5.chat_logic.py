@@ -6,10 +6,10 @@ import lancedb
 import streamlit as st
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
+# Load from .env locally; on Streamlit Cloud use st.secrets
 path_dotenv = os.path.join(os.path.dirname(__file__), "assets", ".env")
 load_dotenv(path_dotenv)
-api_key = os.getenv("GEMINI_API_KEY")
+api_key = st.secrets.get("GEMINI_API_KEY") or os.getenv("GEMINI_API_KEY")
 
 if not api_key:
     st.error("GEMINI_API_KEY not found in environment variables. Please check your .env file.")
@@ -25,7 +25,8 @@ st.caption(f"Using Gemini model: {MODEL_NAME}")
 @st.cache_resource
 def init_db():
     """Initialize LanceDB connection and return the ethics table."""
-    db = lancedb.connect("/home/dahmane/dev/Knowledge-Extraction-Pipeline/src/data/lancedb")
+    db_path = os.path.join(os.path.dirname(__file__), "data", "lancedb")
+    db = lancedb.connect(db_path)
     return db.open_table("ethics")
 
 def get_context(query:str, table, top_k:int=5) -> str:
